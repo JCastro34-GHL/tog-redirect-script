@@ -1,20 +1,19 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const waitForFields = setInterval(() => {
-    const weight = document.querySelector('[name="weight_range_(lbs)"]');
-    const fur = document.querySelector('[name="fur_length"]');
+  const interval = setInterval(() => {
+    const weightEl = document.querySelectorAll(".form-builder--item.field-container")[2]?.querySelector(".multiselect__single");
+    const furEl = document.querySelectorAll(".form-builder--item.field-container")[3]?.querySelector(".multiselect__single");
 
-    if (weight && fur) {
-      clearInterval(waitForFields);
-      console.log("✅ Found weight and fur fields");
+    if (weightEl && furEl) {
+      clearInterval(interval);
+      console.log("✅ Found custom-rendered dropdowns");
 
-      // Attach a global click handler for any button
       document.body.addEventListener("click", function (e) {
-        const isFinalStepButton = e.target && e.target.tagName === "BUTTON";
+        const isButton = e.target && e.target.tagName === "BUTTON";
 
-        if (isFinalStepButton) {
+        if (isButton) {
           setTimeout(() => {
-            const weightValue = weight.value.trim();
-            const furValue = fur.value.trim().toLowerCase();
+            const weightValue = weightEl.textContent.trim();
+            const furValue = furEl.textContent.trim().toLowerCase();
 
             console.log("🧠 Weight:", weightValue);
             console.log("🧠 Fur:", furValue);
@@ -51,16 +50,17 @@ document.addEventListener("DOMContentLoaded", function () {
                   "https://aztempleofgroom.com/giant-longcoat";
                 break;
               default:
-                console.warn("⚠️ No matching redirect. Weight:", weightValue);
+                alert("⚠️ Could not find matching redirect.");
                 return;
             }
 
             console.log("🚀 Redirecting to:", redirectUrl);
             window.location.href = redirectUrl;
-          }, 100); // slight delay to allow DOM to update
+          }, 150);
         }
       });
+    } else {
+      console.log("⏳ Waiting for custom dropdowns to load...");
     }
   }, 300);
 });
-
