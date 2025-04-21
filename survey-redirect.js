@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", function () {
   const interval = setInterval(() => {
     const form = document.querySelector("form");
-    const weightDropdown = document.querySelector('[name="weight_range_(lbs)"]');
-    const furDropdown = document.querySelector('[name="fur_length"]');
+    const weightDropdown = document.querySelector('[name="contact.weight_range_(lbs)"]');
+    const furDropdown = document.querySelector('[name="contact.fur_length"]');
 
     if (form && weightDropdown && furDropdown) {
       clearInterval(interval);
@@ -12,6 +12,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const weight = weightDropdown.value.trim();
         const fur = furDropdown.value.trim().toLowerCase();
+
+        // Debugging output
+        console.log("Weight selected:", weight);
+        console.log("Fur selected:", fur);
 
         let redirectUrl = "";
 
@@ -55,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
               "https://aztempleofgroom.com/giant-longcoat";
             break;
           default:
-            alert("Invalid weight range selected: " + weight);
+            alert("Unrecognized weight range: " + weight);
             return;
         }
 
@@ -68,3 +72,4 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }, 300);
 });
+
