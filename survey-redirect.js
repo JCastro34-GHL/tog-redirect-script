@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const waitForFields = setInterval(() => {
-    const weight = document.querySelector('[name="contact.weight_range_(lbs)"]');
-    const fur = document.querySelector('[name="contact.fur_length"]');
+    const weight = document.querySelector('[name="weight_range_(lbs)"]');
+    const fur = document.querySelector('[name="fur_length"]');
 
     if (weight && fur) {
       clearInterval(waitForFields);
