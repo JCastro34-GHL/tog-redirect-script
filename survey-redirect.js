@@ -1,62 +1,77 @@
 document.addEventListener("DOMContentLoaded", function () {
   const interval = setInterval(() => {
-    const weightEl = document.querySelectorAll(".form-builder--item.field-container")[2]?.querySelector(".multiselect__single");
-    const furEl = document.querySelectorAll(".form-builder--item.field-container")[3]?.querySelector(".multiselect__single");
+    const weightEl = document.querySelector(".form-builder--item.field-container:nth-of-type(3) .multiselect__single");
+    const furButtons = document.querySelectorAll("button");
 
-    if (weightEl && furEl) {
+    if (weightEl && furButtons.length) {
       clearInterval(interval);
-      console.log("✅ Found custom-rendered dropdowns");
+      console.log("✅ Found weight and buttons");
 
+      let selectedFur = "";
+
+      // Listen for fur button clicks
+      furButtons.forEach(button => {
+        button.addEventListener("click", () => {
+          const label = button.textContent.trim().toLowerCase();
+          if (label.includes("short")) {
+            selectedFur = "short";
+          } else if (label.includes("long")) {
+            selectedFur = "long";
+          }
+        });
+      });
+
+      // Watch for final button click to redirect
       document.body.addEventListener("click", function (e) {
-        const isButton = e.target && e.target.tagName === "BUTTON";
-
-        if (isButton) {
+        if (e.target.tagName === "BUTTON") {
           setTimeout(() => {
-            const weightValue = weightEl.textContent.trim();
-            const furValue = furEl.textContent.trim().toLowerCase();
+            const weight = weightEl.textContent.trim();
+            const fur = selectedFur;
 
-            console.log("🧠 Weight:", weightValue);
-            console.log("🧠 Fur:", furValue);
+            console.log("🧠 Weight:", weight);
+            console.log("🧠 Fur:", fur);
 
             let redirectUrl = "";
 
-            switch (weightValue) {
+            switch (weight) {
               case "(0-5)":
                 redirectUrl = "https://aztempleofgroom.com/xsmall-dogs";
                 break;
               case "(6-15)":
-                redirectUrl = (furValue === "short") ?
+                redirectUrl = (fur === "short") ?
                   "https://aztempleofgroom.com/small-shortcoat" :
                   "https://aztempleofgroom.com/small-long-coat";
                 break;
               case "(16-35)":
-                redirectUrl = (furValue === "short") ?
+                redirectUrl = (fur === "short") ?
                   "https://aztempleofgroom.com/medium-shortcoat" :
                   "https://aztempleofgroom.com/medium-longcoat";
                 break;
               case "(36-65)":
-                redirectUrl = (furValue === "short") ?
+                redirectUrl = (fur === "short") ?
                   "https://aztempleofgroom.com/large-shortcoat" :
                   "https://aztempleofgroom.com/large-longcoat";
                 break;
               case "(66-85)":
-                redirectUrl = (furValue === "short") ?
+                redirectUrl = (fur === "short") ?
                   "https://aztempleofgroom.com/xlarge-shortcoat" :
                   "https://aztempleofgroom.com/xlarge-longcoat";
                 break;
               case "86+":
-                redirectUrl = (furValue === "short") ?
+                redirectUrl = (fur === "short") ?
                   "https://aztempleofgroom.com/giant-shortcoat" :
                   "https://aztempleofgroom.com/giant-longcoat";
                 break;
               default:
-                alert("⚠️ Could not find matching redirect.");
+                alert("⚠️ Could not match weight or fur.");
                 return;
             }
 
-            console.log("🚀 Redirecting to:", redirectUrl);
-            window.location.href = redirectUrl;
-          }, 150);
+            if (redirectUrl) {
+              console.log("🚀 Redirecting to:", redirectUrl);
+              window.location.href = redirectUrl;
+            }
+          }, 200);
         }
       });
     } else {
