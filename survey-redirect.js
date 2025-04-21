@@ -1,74 +1,66 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const interval = setInterval(() => {
-    const weightDropdown = document.querySelector('[name="contact.weight_range_(lbs)"]');
-    const furDropdown = document.querySelector('[name="contact.fur_length"]');
-    const buttons = document.querySelectorAll("button");
+  const waitForFields = setInterval(() => {
+    const weight = document.querySelector('[name="contact.weight_range_(lbs)"]');
+    const fur = document.querySelector('[name="contact.fur_length"]');
 
-    // Wait for everything to be ready
-    if (weightDropdown && furDropdown && buttons.length) {
-      clearInterval(interval);
+    if (weight && fur) {
+      clearInterval(waitForFields);
+      console.log("✅ Found weight and fur fields");
 
-      // Attach to ALL buttons just in case GHL renders the final submit button dynamically
-      buttons.forEach(button => {
-        button.addEventListener("click", function () {
-          const weight = weightDropdown.value.trim();
-          const fur = furDropdown.value.trim().toLowerCase();
+      // Attach a global click handler for any button
+      document.body.addEventListener("click", function (e) {
+        const isFinalStepButton = e.target && e.target.tagName === "BUTTON";
 
-          console.log("Button clicked ✅");
-          console.log("Weight selected:", weight);
-          console.log("Fur selected:", fur);
-
-          let redirectUrl = "";
-
-          if (!weight) {
-            alert("Please select your dog's weight.");
-            return;
-          }
-
-          if (weight !== "(0-5)" && !fur) {
-            alert("Please select your dog's fur length.");
-            return;
-          }
-
-          switch (weight) {
-            case "(0-5)":
-              redirectUrl = "https://aztempleofgroom.com/xsmall-dogs";
-              break;
-            case "(6-15)":
-              redirectUrl = (fur === "short") ?
-                "https://aztempleofgroom.com/small-shortcoat" :
-                "https://aztempleofgroom.com/small-long-coat";
-              break;
-            case "(16-35)":
-              redirectUrl = (fur === "short") ?
-                "https://aztempleofgroom.com/medium-shortcoat" :
-                "https://aztempleofgroom.com/medium-longcoat";
-              break;
-            case "(36-65)":
-              redirectUrl = (fur === "short") ?
-                "https://aztempleofgroom.com/large-shortcoat" :
-                "https://aztempleofgroom.com/large-longcoat";
-              break;
-            case "(66-85)":
-              redirectUrl = (fur === "short") ?
-                "https://aztempleofgroom.com/xlarge-shortcoat" :
-                "https://aztempleofgroom.com/xlarge-longcoat";
-              break;
-            case "86+":
-              redirectUrl = (fur === "short") ?
-                "https://aztempleofgroom.com/giant-shortcoat" :
-                "https://aztempleofgroom.com/giant-longcoat";
-              break;
-            default:
-              alert("Unrecognized weight range: " + weight);
-              return;
-          }
-
+        if (isFinalStepButton) {
           setTimeout(() => {
+            const weightValue = weight.value.trim();
+            const furValue = fur.value.trim().toLowerCase();
+
+            console.log("🧠 Weight:", weightValue);
+            console.log("🧠 Fur:", furValue);
+
+            let redirectUrl = "";
+
+            switch (weightValue) {
+              case "(0-5)":
+                redirectUrl = "https://aztempleofgroom.com/xsmall-dogs";
+                break;
+              case "(6-15)":
+                redirectUrl = (furValue === "short") ?
+                  "https://aztempleofgroom.com/small-shortcoat" :
+                  "https://aztempleofgroom.com/small-long-coat";
+                break;
+              case "(16-35)":
+                redirectUrl = (furValue === "short") ?
+                  "https://aztempleofgroom.com/medium-shortcoat" :
+                  "https://aztempleofgroom.com/medium-longcoat";
+                break;
+              case "(36-65)":
+                redirectUrl = (furValue === "short") ?
+                  "https://aztempleofgroom.com/large-shortcoat" :
+                  "https://aztempleofgroom.com/large-longcoat";
+                break;
+              case "(66-85)":
+                redirectUrl = (furValue === "short") ?
+                  "https://aztempleofgroom.com/xlarge-shortcoat" :
+                  "https://aztempleofgroom.com/xlarge-longcoat";
+                break;
+              case "86+":
+                redirectUrl = (furValue === "short") ?
+                  "https://aztempleofgroom.com/giant-shortcoat" :
+                  "https://aztempleofgroom.com/giant-longcoat";
+                break;
+              default:
+                console.warn("⚠️ No matching redirect. Weight:", weightValue);
+                return;
+            }
+
+            console.log("🚀 Redirecting to:", redirectUrl);
             window.location.href = redirectUrl;
-          }, 500);
-        });
+          }, 100); // slight delay to allow DOM to update
+        }
       });
     }
   }, 300);
 });
+
