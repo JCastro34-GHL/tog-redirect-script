@@ -36,26 +36,20 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log("🖱️ Button clicked... collecting input data...");
 
       const inputs = formWrapper.querySelectorAll("input");
-      const furInput = formWrapper.querySelector(".multiselect__input");
-
       const petName = inputs[0]?.value?.trim() || "(missing)";
       const breed = inputs[1]?.value?.trim() || "(missing)";
       const weightRaw = parseFloat(inputs[2]?.value) || 0;
 
-      // 🐶 Detect fur length via aria-activedescendant
-      let furLength = "(missing)";
-      const furState = furInput?.getAttribute("aria-activedescendant");
-
-      if (furState === "null-0") furLength = "Short";
-      else if (furState === "null-1") furLength = "Long";
-      else if (!furState) console.warn("⚠️ No aria-activedescendant found.");
-      else console.warn(`⚠️ Unexpected aria-activedescendant: ${furState}`);
+      // ✅ Reliable fur length detection using visible text
+      const furDisplay = formWrapper.querySelector(".multiselect__single");
+      const furLength = furDisplay?.innerText?.trim() || "(missing)";
 
       console.log(`🐾 Pet Name: ${petName}`);
       console.log(`🐾 Breed: ${breed}`);
       console.log(`⚖️ Weight (raw): ${weightRaw}`);
       console.log(`💈 Fur Length: ${furLength}`);
 
+      // 🏋️ Weight category
       let weightCategory = "Unknown";
       if (weightRaw >= 0 && weightRaw <= 5) weightCategory = "0–5 lbs";
       else if (weightRaw <= 15) weightCategory = "6–15 lbs";
@@ -64,9 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
       else if (weightRaw <= 85) weightCategory = "66–85 lbs";
       else if (weightRaw > 85) weightCategory = "86+ lbs";
 
-      console.log(`📦 Weight Category: ${weightCategory}`);
-
-            // 🧭 Redirect logic
+      // 🧭 Redirect logic
       let sizeLabel = "";
       if (weightCategory === "0–5 lbs") sizeLabel = "xsmall";
       else if (weightCategory === "6–15 lbs") sizeLabel = "small";
@@ -75,8 +67,8 @@ document.addEventListener("DOMContentLoaded", function () {
       else if (weightCategory === "66–85 lbs") sizeLabel = "xlarge";
       else if (weightCategory === "86+ lbs") sizeLabel = "giant";
 
-      let coatLabel = furLength === "Short" ? "shortcoat" :
-                      furLength === "Long" ? "longcoat" : null;
+      let coatLabel = furLength.toLowerCase() === "short" ? "shortcoat" :
+                      furLength.toLowerCase() === "long" ? "longcoat" : null;
 
       if (sizeLabel && coatLabel) {
         const redirectUrl = `https://aztempleofgroom.com/${sizeLabel}-${coatLabel}`;
@@ -85,5 +77,9 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         alert(`🚨 Missing size or fur data. Cannot redirect.\n\nPet: ${petName}\nBreed: ${breed}\nWeight: ${weightRaw} lbs\nFur: ${furLength}`);
       }
-
+    });
+  }).catch(error => {
+    console.error(error);
+  });
+});
 </script>
