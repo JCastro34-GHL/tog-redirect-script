@@ -41,12 +41,20 @@ document.addEventListener("DOMContentLoaded", function () {
       const petName = inputs[0]?.value?.trim() || "(missing)";
       const breed = inputs[1]?.value?.trim() || "(missing)";
       const weightRaw = parseFloat(inputs[2]?.value) || 0;
-      const furLength = furInput?.value?.trim() || "(missing)";
+
+      // 🐶 Detect fur length via aria-activedescendant
+      let furLength = "(missing)";
+      const furState = furInput?.getAttribute("aria-activedescendant");
+
+      if (furState === "null-0") furLength = "Short";
+      else if (furState === "null-1") furLength = "Long";
+      else if (!furState) console.warn("⚠️ No aria-activedescendant found.");
+      else console.warn(`⚠️ Unexpected aria-activedescendant: ${furState}`);
 
       console.log(`🐾 Pet Name: ${petName}`);
       console.log(`🐾 Breed: ${breed}`);
-      console.log(`🐾 Weight (raw): ${weightRaw}`);
-      console.log(`🐾 Fur Length: ${furLength}`);
+      console.log(`⚖️ Weight (raw): ${weightRaw}`);
+      console.log(`💈 Fur Length: ${furLength}`);
 
       let weightCategory = "Unknown";
       if (weightRaw >= 0 && weightRaw <= 5) weightCategory = "0–5 lbs";
