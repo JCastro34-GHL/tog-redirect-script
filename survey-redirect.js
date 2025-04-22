@@ -1,75 +1,71 @@
+<script>
+function waitForElement(selector, maxRetries = 15, delay = 500) {
+  return new Promise((resolve, reject) => {
+    let attempts = 0;
+    const interval = setInterval(() => {
+      const el = document.querySelector(selector);
+      attempts++;
+      if (el) {
+        clearInterval(interval);
+        console.log(`✅ Element '${selector}' found after ${attempts} tries.`);
+        resolve(el);
+      }
+      if (attempts >= maxRetries) {
+        clearInterval(interval);
+        reject(`❌ Element '${selector}' NOT found after ${maxRetries} tries.`);
+      }
+    }, delay);
+  });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
-  const interval = setInterval(() => {
-    const multiselects = document.querySelectorAll(".multiselect__single");
-    const furButtons = document.querySelectorAll("button");
+  console.log("🔥 Script loaded... searching for .c-form...");
 
-    if (multiselects.length >= 2 && furButtons.length >= 1) {
-      clearInterval(interval);
-      console.log("✅ Found dropdown text containers and fur buttons");
+  waitForElement(".c-form", 20, 500).then(formWrapper => {
+    console.log("✅ .c-form found:", formWrapper);
 
-      let selectedFur = "";
-
-      // Listen for fur button clicks
-      furButtons.forEach(button => {
-        button.addEventListener("click", () => {
-          const label = button.textContent.trim().toLowerCase();
-          if (label.includes("short")) selectedFur = "short";
-          else if (label.includes("long")) selectedFur = "long";
-        });
-      });
-
-      document.body.addEventListener("click", function (e) {
-        if (e.target.tagName === "BUTTON") {
-          setTimeout(() => {
-            const weightValue = multiselects[0].textContent.trim();
-            const fur = selectedFur;
-
-            console.log("🧠 Weight:", weightValue);
-            console.log("🧠 Fur:", fur);
-
-            let redirectUrl = "";
-
-            switch (weightValue) {
-              case "(0-5)":
-                redirectUrl = "https://aztempleofgroom.com/xsmall-dogs";
-                break;
-              case "(6-15)":
-                redirectUrl = (fur === "short") ?
-                  "https://aztempleofgroom.com/small-shortcoat" :
-                  "https://aztempleofgroom.com/small-long-coat";
-                break;
-              case "(16-35)":
-                redirectUrl = (fur === "short") ?
-                  "https://aztempleofgroom.com/medium-shortcoat" :
-                  "https://aztempleofgroom.com/medium-longcoat";
-                break;
-              case "(36-65)":
-                redirectUrl = (fur === "short") ?
-                  "https://aztempleofgroom.com/large-shortcoat" :
-                  "https://aztempleofgroom.com/large-longcoat";
-                break;
-              case "(66-85)":
-                redirectUrl = (fur === "short") ?
-                  "https://aztempleofgroom.com/xlarge-shortcoat" :
-                  "https://aztempleofgroom.com/xlarge-longcoat";
-                break;
-              case "86+":
-                redirectUrl = (fur === "short") ?
-                  "https://aztempleofgroom.com/giant-shortcoat" :
-                  "https://aztempleofgroom.com/giant-longcoat";
-                break;
-              default:
-                alert("Weight or fur selection missing.");
-                return;
-            }
-
-            console.log("🚀 Redirecting to:", redirectUrl);
-            window.location.href = redirectUrl;
-          }, 200);
-        }
-      });
-    } else {
-      console.log("⏳ Waiting for multiselect values to appear...");
+    const submitBtn = formWrapper.querySelector("button");
+    if (!submitBtn) {
+      console.error("❌ Submit button NOT found.");
+      return;
     }
-  }, 300);
+    console.log("✅ Submit button found:", submitBtn);
+
+    submitBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      console.log("🖱️ Button clicked... collecting input data...");
+
+      const inputs = formWrapper.querySelectorAll("input");
+      const furInput = formWrapper.querySelector(".multiselect__input");
+
+      const petName = inputs[0]?.value?.trim() || "(missing)";
+      const breed = inputs[1]?.value?.trim() || "(missing)";
+      const weightRaw = parseFloat(inputs[2]?.value) || 0;
+      const furLength = furInput?.value?.trim() || "(missing)";
+
+      console.log(`🐾 Pet Name: ${petName}`);
+      console.log(`🐾 Breed: ${breed}`);
+      console.log(`🐾 Weight (raw): ${weightRaw}`);
+      console.log(`🐾 Fur Length: ${furLength}`);
+
+      let weightCategory = "Unknown";
+      if (weightRaw >= 0 && weightRaw <= 5) weightCategory = "0–5 lbs";
+      else if (weightRaw <= 15) weightCategory = "6–15 lbs";
+      else if (weightRaw <= 35) weightCategory = "16–35 lbs";
+      else if (weightRaw <= 65) weightCategory = "36–65 lbs";
+      else if (weightRaw <= 85) weightCategory = "66–85 lbs";
+      else if (weightRaw > 85) weightCategory = "86+ lbs";
+
+      console.log(`📦 Weight Category: ${weightCategory}`);
+
+      alert(`✅ JS fired! Here's the data:\n
+Pet: ${petName}
+Breed: ${breed}
+Weight: ${weightRaw} lbs (${weightCategory})
+Fur: ${furLength}`);
+    });
+  }).catch(error => {
+    console.error(error);
+  });
 });
+</script>
