@@ -66,14 +66,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
       console.log(`📦 Weight Category: ${weightCategory}`);
 
-      alert(`✅ JS fired! Here's the data:\n
-Pet: ${petName}
-Breed: ${breed}
-Weight: ${weightRaw} lbs (${weightCategory})
-Fur: ${furLength}`);
-    });
-  }).catch(error => {
-    console.error(error);
-  });
-});
+            // 🧭 Redirect logic
+      let sizeLabel = "";
+      if (weightCategory === "0–5 lbs") sizeLabel = "xsmall";
+      else if (weightCategory === "6–15 lbs") sizeLabel = "small";
+      else if (weightCategory === "16–35 lbs") sizeLabel = "medium";
+      else if (weightCategory === "36–65 lbs") sizeLabel = "large";
+      else if (weightCategory === "66–85 lbs") sizeLabel = "xlarge";
+      else if (weightCategory === "86+ lbs") sizeLabel = "giant";
+
+      let coatLabel = furLength === "Short" ? "shortcoat" :
+                      furLength === "Long" ? "longcoat" : null;
+
+      if (sizeLabel && coatLabel) {
+        const redirectUrl = `https://aztempleofgroom.com/${sizeLabel}-${coatLabel}`;
+        console.log(`🔗 Redirecting to: ${redirectUrl}`);
+        window.location.href = redirectUrl;
+      } else {
+        alert(`🚨 Missing size or fur data. Cannot redirect.\n\nPet: ${petName}\nBreed: ${breed}\nWeight: ${weightRaw} lbs\nFur: ${furLength}`);
+      }
+
 </script>
